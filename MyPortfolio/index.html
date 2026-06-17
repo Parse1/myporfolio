@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Rhodney</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #ffffff;
+      --ink: #000000;
+      --warm: #555555;
+      --muted: #666666;
+      --accent: #0a0a0a;
+      --light: #e8e8e8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.18s ease;
+      opacity: 0.6;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.15;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.8rem 4rem;
+      mix-blend-mode: multiply;
+    }
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 4rem 4rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-size: clamp(3.5rem, 6vw, 6rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-title {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 1.2rem;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-top: 2rem;
+      max-width: 420px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .hero-cta {
+      display: flex; gap: 1.5rem; margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1s forwards;
+    }
+
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: transparent;
+      transition: all 0.3s;
+      cursor: none;
+    }
+    .btn:hover { background: var(--ink); color: var(--cream); }
+    .btn.filled { background: var(--accent); border-color: var(--accent); color: var(--cream); }
+    .btn.filled:hover { background: var(--ink); border-color: var(--ink); }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-img-wrap {
+      position: absolute;
+      inset: 0;
+      clip-path: polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%);
+      opacity: 0;
+      animation: fadeIn 1.2s 0.5s forwards;
+    }
+
+    .hero-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: sepia(15%) contrast(1.05);
+    }
+
+    .hero-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(200,169,126,0.15), transparent 60%);
+    }
+
+    /* Floating number tag */
+    .hero-number {
+      position: absolute;
+      bottom: 3rem; left: -2rem;
+      background: var(--cream);
+      padding: 1.5rem 2rem;
+      z-index: 10;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+      opacity: 0;
+      animation: fadeUp 0.8s 1.2s forwards;
+    }
+    .hero-number span {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .hero-number strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    /* Decorative line */
+    .hero-line {
+      position: absolute;
+      left: 4rem; bottom: 4rem;
+      width: 1px; height: 80px;
+      background: var(--warm);
+      opacity: 0;
+      animation: fadeIn 1s 1.4s forwards;
+    }
+
+    /* STATS BAR */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--light);
+      border-bottom: 1px solid var(--light);
+    }
+    .stat {
+      padding: 2.5rem 3rem;
+      border-right: 1px solid var(--light);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s;
+    }
+    .stat.visible { opacity: 1; transform: none; }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .stat-num em { font-style: italic; color: var(--accent); }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* ABOUT */
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 6rem;
+      padding: 8rem 4rem;
+      border-bottom: 1px solid var(--light);
+    }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .about-heading {
+      font-size: 3rem;
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .about-heading em { font-style: italic; color: var(--accent); }
+    .about-text {
+      font-size: 1.15rem;
+      line-height: 1.9;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .about-text p + p { margin-top: 1.2rem; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .skill-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* WORK */
+    .work { padding: 8rem 4rem; }
+    .work-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+    .work-heading {
+      font-size: 3rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+    }
+    .work-heading em { font-style: italic; color: var(--accent); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .project-card {
+      background: var(--light);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s;
+      cursor: none;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    /* Background image layer */
+    .project-card .card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.12;
+      transition: opacity 0.5s ease;
+      z-index: 0;
+    }
+    /* Dark overlay always on top of bg image */
+    .project-card .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.15) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+    .project-card:hover .card-bg { opacity: 1; }
+    .project-card:hover .card-overlay { opacity: 1; }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+      z-index: 2;
+    }
+    .project-card:hover::before { transform: translateY(0); }
+    .project-card:hover .project-num,
+    .project-card:hover .project-title,
+    .project-card:hover .project-desc,
+    .project-card:hover .project-tag { color: var(--cream);
+      position: relative; z-index: 3;
+    }
+    .project-card:hover .project-tag { border-color: rgba(245,240,232,0.3); }
+
+    .project-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      position: relative; z-index: 3;
+      transition: color 0.4s;
+    }
+    .project-title {
+      font-size: 1.6rem;
+      font-weight: 300;
+      margin: 1rem 0 0.8rem;
+      letter-spacing: -0.01em;
+      position: relative; z-index: 3;
+      transition: color 0.4s;
+    }
+    .project-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--muted);
+      font-weight: 300;
+      position: relative; z-index: 3;
+      transition: color 0.4s;
+    }
+    .project-tag {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--light);
+      padding: 0.3rem 0.8rem;
+      position: relative; z-index: 3;
+      transition: all 0.4s;
+    }
+
+    /* CONTACT */
+    .contact {
+      padding: 8rem 4rem;
+      background: var(--ink);
+      color: var(--cream);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact::before {
+      content: 'CONTACT';
+      position: absolute;
+      font-size: 18vw;
+      font-weight: 300;
+      color: rgba(255,255,255,0.03);
+      bottom: -2rem;
+      left: -1rem;
+      letter-spacing: -0.05em;
+      pointer-events: none;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .contact-heading {
+      font-size: 3.5rem;
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .contact-heading em { font-style: italic; color: var(--warm); }
+
+    .contact-sub {
+      font-size: 1rem;
+      color: rgba(245,240,232,0.5);
+      margin-top: 1.5rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .contact-items { display: flex; flex-direction: column; gap: 2rem; }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(245,240,232,0.1);
+    }
+    .contact-item:last-child { border-bottom: none; }
+
+    .contact-item-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--warm);
+    }
+    .contact-item-value {
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .contact-item-value:hover { color: var(--warm); }
+
+    .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.5);
+    }
+    .form-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(245,240,232,0.2);
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      padding: 0.8rem 0;
+      outline: none;
+      transition: border-color 0.3s;
+      cursor: none;
+    }
+    .form-input:focus { border-color: var(--warm); }
+    .form-input::placeholder { color: rgba(245,240,232,0.25); }
+    textarea.form-input { resize: none; height: 100px; }
+
+    .form-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--warm);
+      color: var(--ink);
+      border: none;
+      padding: 1rem 2.5rem;
+      align-self: flex-start;
+      cursor: none;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .form-btn:hover { background: var(--cream); }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.3);
+      text-transform: uppercase;
+    }
+    .social-links { display: flex; gap: 2rem; }
+    .social-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.3);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .social-links a:hover { color: var(--warm); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 1rem 1.8rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      nav { padding: 1.5rem 2rem; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 7rem 2rem 3rem; }
+      .hero-right { height: 50vh; }
+      .hero-img-wrap { clip-path: none; }
+      .hero-number { left: 1rem; bottom: 2rem; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid var(--light); }
+      .about { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 2rem; }
+      .work { padding: 4rem 2rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .contact { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
+      footer { flex-direction: column; gap: 1rem; padding: 1.5rem 2rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Rhodney C. Mayorga</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-tag">Seeking for Work · 2026</p>
+      <h1 class="hero-name">Rhodney<br><em>Mayorga</em></h1>
+      <p class="hero-title">Network &amp; Technical Services</p>
+      <p class="hero-desc">Seeking for jobs opportunities that align in my work experience and also to expand my knowledge in Network and in IT Industry.</p>
+      <div class="hero-cta">
+        <a href="#work" class="btn filled">View Work</a>
+        <a href="#contact" class="btn">Get In Touch</a>
+      </div>
+      <div class="hero-line"></div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img-wrap">
+        <img src="images/8.png" alt="Rhodney C. Mayorga" />
+        <div class="hero-img-overlay"></div>
+      </div>
+      <div class="hero-number">
+        <span>Direct Line</span>
+        <strong>+63 954 248 8938</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-num">4<em>+</em></div>
+      <div class="stat-label">Years Experience Network and Technical Service</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"> 2 <em>+</em></div>
+      <div class="stat-label">Projects Completed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"> 2 <em>+</em></div>
+      <div class="stat-label">Certifications</div>
+    </div>
+  </section> -->
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div>
+      <p class="section-label">About Me</p>
+      <h2 class="about-heading">Built to<br><em>connect</em></h2>
+    </div>
+    <div>
+      <div class="about-text" style="text-size-adjust: var(--ink);">
+        <p>Seeking a career that can benefit from my technical skills, programming and abilities in the field of Information Technology (IT). Eager to learn and contribute. As a BSIT graduate with hands-onexperience as a working scholar, I aim to secure a position in the IT industry where I can applymy knowledge in programming, system troubleshooting, and network support. With strongtechnical and communication skills, I am confident in providing both voice and non-voice technicalassistance while contributing to efficient and reliable IT solutions."</p>
+        <p>From enterprise LAN/WAN deployments to cloud connectivity and technical support operations, I help organizations build resilient, secure, and scalable network environments.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-item"><div class="skill-dot"></div>Network Utilization</div>
+        <div class="skill-item"><div class="skill-dot"></div>LAN / WAN / AP Cisco</div>
+        <div class="skill-item"><div class="skill-dot"></div>Dell &amp; Mikrotik</div>
+        <div class="skill-item"><div class="skill-dot"></div>Crimping, Installation &amp; Cabling</div>
+        <div class="skill-item"><div class="skill-dot"></div>Technical Support</div>
+        <div class="skill-item"><div class="skill-dot"></div>Server Management</div>
+        <div class="skill-item"><div class="skill-dot"></div>HTML / CSS / JavaScript / C#</div>
+        <div class="skill-item"><div class="skill-dot"></div>MS Office Apps</div>
+         <div class="skill-item"><div class="skill-dot"></div>Hikvision &amp; Dahua CCTV Installation</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="work" id="work">
+    <div class="work-header">
+      <h2 class="work-heading">Work <em>Experiences:</em></h2>
+      <p style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">2022 — 2025</p>
+    </div>
+    <div class="projects-grid">
+      <!-- <div class="project-card"><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80')"></div><div class="card-overlay"></div><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1551703599-6b3e8379aa8c?w=800&q=80')"></div><div class="card-overlay"></div><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1605792657660-596af9009e82?w=800&q=80')"></div><div class="card-overlay"></div><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80')"></div><div class="card-overlay"></div><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=800&q=80')"></div><div class="card-overlay"></div><div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80')"></div><div class="card-overlay"></div>
+        <div class="project-num">01 / 06</div>
+        <h3 class="project-title">Enterprise LAN Deployment</h3>
+        <p class="project-desc">Full structured cabling and switching deployment for a 500-node enterprise network. Cut downtime by 60%.</p>
+        <span class="project-tag">Networking · Enterprise</span>
+      </div> -->
+      <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">Data Center Build-Out</h3>
+        <p class="project-desc">Designed and implemented a modular data center rack system with redundant power and cooling for a regional ISP.</p>
+        <span class="project-tag">Data Center · ISP · Network</span>
+      </div>
+      <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">Monitoring AP &amp; Ubiquiti</h3>
+        <p class="project-desc">Secure speed for each people and devices.Also check the status of the APs and Ubiquiti devices.</p>
+        <span class="project-tag"> AP · Security</span>
+      </div>
+      <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">Cabling  Network</h3>
+        <p class="project-desc">Cabling for new setup, patching cable ensure proper connectivity.</p>
+        <span class="project-tag">Patching · Cabling</span>
+      </div>
+      <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">ISP Monitoring Setup</h3>
+        <p class="project-desc">Daily update for the ISP monitoring system.</p>
+        <span class="project-tag">ISP · Monitoring</span>
+      </div>
+      <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">Technical Support Assistance</h3>
+        <p class="project-desc">Assist Admin, Staff and Users with technical issues and inquiries.</p>
+        <span class="project-tag">Support · Helpdesk</span>
+      </div>
+       <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">PC, Printer Support</h3>
+        <p class="project-desc">Assist Admin, Staff and Users set up pc, and printer also troubleshooting.</p>
+        <span class="project-tag">Support · Hardware</span>
+      </div>
+     <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">CCTV Installation and Maintenance</h3>
+        <p class="project-desc">Check cctv camera functionality and perform routine maintenance.</p>
+        <span class="project-tag">Support · Security</span>
+      </div>
+     
+     <div class="project-card">
+        <div class="project-num">••••••</div>
+        <h3 class="project-title">MS Office Apps</h3>
+        <p class="project-desc">Provide support and training for MS Office applications. Activation and troubleshooting.</p>
+        <span class="project-tag">Support · Productivity</span>
+      </div>
+  </section>
+  <style>
+  .gallery-section {
+    padding: 2rem 0;
+    overflow: hidden;
+  }
+
+  .gallery-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .gallery-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--muted), transparent);
+    opacity: 0.3;
+  }
+
+  .marquee-wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* fade edges */
+  .marquee-wrapper::before,
+  .marquee-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .marquee-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg, #0d0d0d), transparent);
+  }
+
+  .marquee-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg, #0d0d0d), transparent);
+  }
+
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    animation: marquee 18s linear infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-item {
+    flex-shrink: 0;
+    width: 280px;
+    aspect-ratio: 4/3;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 14px;
+    transition: transform 0.5s ease, filter 0.5s ease;
+    filter: brightness(0.88) saturate(0.9);
+  }
+
+  .marquee-item:hover img {
+    transform: scale(1.06);
+    filter: brightness(1.05) saturate(1.1);
+  }
+
+  .marquee-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%);
+    border-radius: 14px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .marquee-item:hover::after {
+    opacity: 1;
+  }
+</style>
+
+<div class="gallery-section">
+  <p class="gallery-title">Field Work · Gallery</p>
+
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <!-- original set -->
+      <div class="marquee-item"><img src="images/4.jpg"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/5.jpg"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/6.png"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/8.png"  alt="CCTV installation" /></div>
+      <div class="marquee-item"><img src="images/7.png"  alt="Network rack" /></div>
+      <div class="marquee-item"><img src="images/9.png"  alt="Field work" /></div>
+      <div class="marquee-item"><img src="images/10.png" alt="Network setup" /></div>
+      <!-- duplicate set for seamless loop -->
+      <div class="marquee-item"><img src="images/4.jpg"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/5.jpg"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/6.png"  alt="Site planning" /></div>
+      <div class="marquee-item"><img src="images/8.png"  alt="CCTV installation" /></div>
+      <div class="marquee-item"><img src="images/7.png"  alt="Network rack" /></div>
+      <div class="marquee-item"><img src="images/9.png"  alt="Field work" /></div>
+      <div class="marquee-item"><img src="images/10.png" alt="Network setup" /></div>
+    </div>
+  </div>
+  
+</div>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div>
+      <p class="section-label" style="color:var(--warm)">Get In Touch</p>
+      <h2 class="contact-heading">Let's build<br>something <em>great</em></h2>
+      
+
+      <div class="contact-items" style="margin-top:3rem">
+        <div class="contact-item">
+          <span class="contact-item-label">Phone</span>
+          <a href="tel:+639542488938" class="contact-item-value">+63 954 248 8938</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Email</span>
+          <a href="mailto:act.rmayorga@gmail.com" class="contact-item-value">act.rmayorga@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Location</span>
+          <span class="contact-item-value">Cebu City, Philippines</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Availability</span>
+          <span class="contact-item-value" style="color:var(--warm)">&#9679; Open to opportunities</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Rhodney C. Mayorga" id="fname"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="act.rmayorga@gmail.com" id="femail"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-input" placeholder="Project inquiry..." id="fsubject"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" placeholder="God bless you!" id="fmessage"></textarea>
+        </div>
+        <button class="form-btn" id="sendBtn">Send Message &#8594;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>&#169; 2026 Rhodney C. Mayorga &#8212; All rights reserved</span>
+    <div class="social-links">
+      <a href="#">Facebook</a>
+      <a href="#">Gmail</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Messenger</a>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">Message sent — I'll be in touch soon!</div>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Hover effect on interactive elements
+    document.querySelectorAll('a, button, .project-card, .btn, .form-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+        ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+        ring.style.opacity = '0.3';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.opacity = '0.6';
+      });
+    });
+
+    // Intersection observer for stats
+    const stats = document.querySelectorAll('.stat');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 120);
+        }
+      });
+    }, { threshold: 0.2 });
+    stats.forEach(s => observer.observe(s));
+
+    // Counter animation
+    function animateCount(el, target, suffix) {
+      let start = 0;
+      const duration = 1400;
+      const step = timestamp => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.innerHTML = Math.floor(eased * target) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    const statNums = document.querySelectorAll('.stat-num');
+    const targets = [5, 48, 30, 12];
+    const statObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = Array.from(statNums).indexOf(entry.target);
+          const val = targets[idx];
+          animateCount(entry.target, val, '<em>+</em>');
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    statNums.forEach(n => statObserver.observe(n));
+
+    // Form submit
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const name = document.getElementById('fname').value.trim();
+      const email = document.getElementById('femail').value.trim();
+      if (!name || !email) {
+        showToast('Please fill in your name and email.');
+        return;
+      }
+      showToast("Message sent \u2014 I'll be in touch soon!");
+      document.getElementById('fname').value = '';
+      document.getElementById('femail').value = '';
+      document.getElementById('fsubject').value = '';
+      document.getElementById('fmessage').value = '';
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Scroll reveal for sections
+    const revealEls = document.querySelectorAll('.about, .work, .contact');
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'none';
+        }
+      });
+    }, { threshold: 0.08 });
+
+    revealEls.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(40px)';
+      el.style.transition = 'opacity 0.9s ease, transform 0.9s ease';
+      revealObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
